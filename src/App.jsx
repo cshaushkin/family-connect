@@ -20,7 +20,7 @@ const MOODS = {
 function App() {
   const [currentScreen, setCurrentScreen] = useState('login');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [familyMembers, setFamilyMembers] = useState(MOCK_FAMILY);
+  const [familyMembers] = useState(MOCK_FAMILY);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [currentUserMood, setCurrentUserMood] = useState('good');

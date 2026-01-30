@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { auth } from './firebase';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 
 // Mock data for demo - replace with Firebase later
 const MOCK_FAMILY = [
@@ -24,15 +26,29 @@ function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [currentUserMood, setCurrentUserMood] = useState('good');
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // Mock authentication - replace with real auth
-    if (email && password) {
-      setIsAuthenticated(true);
-      setCurrentScreen('map');
+  const handleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    // Try to sign in
+    await signInWithEmailAndPassword(auth, email, password);
+    setIsAuthenticated(true);
+    setCurrentScreen('map');
+  } catch (error) {
+    // If sign in fails, try to create account
+    if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        setIsAuthenticated(true);
+        setCurrentScreen('map');
+      } catch (createError) {
+        alert('Error: ' + createError.message);
+      }
+    } else {
+      alert('Error: ' + error.message);
     }
-  };
+  }
+};
+
 
   if (!isAuthenticated) {
     return <LoginScreen email={email} setEmail={setEmail} password={password} setPassword={setPassword} handleLogin={handleLogin} />;
